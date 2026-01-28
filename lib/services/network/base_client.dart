@@ -4,10 +4,10 @@ import 'package:dio/dio.dart';
 class BaseClient {
   late final Dio _dio;
 
-  BaseClient() {
+  BaseClient({String? baseUrl}) {
     _dio = Dio(
       BaseOptions(
-        baseUrl: Constants.baseUrl,
+        baseUrl: baseUrl ?? Constants.baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
@@ -21,29 +21,24 @@ class BaseClient {
   Dio get dio => _dio;
 
   Future<Result<Response>> get(
-      String path, {
-        Map<String, dynamic>? queryParameters,
-      }) async {
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
-      final response = await _dio.get(
-        path,
-        queryParameters: queryParameters,
-      );
+      final response = await _dio.get(path, queryParameters: queryParameters);
       return Success(response);
     } on DioException catch (e) {
       return Failure(_mapDioError(e));
     } catch (e) {
-      return Failure(
-        UnknownError(e.toString()),
-      );
+      return Failure(UnknownError(e.toString()));
     }
   }
 
   Future<Result<Response>> post(
-      String path, {
-        dynamic data,
-        Map<String, dynamic>? queryParameters,
-      }) async {
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
       final response = await _dio.post(
         path,
@@ -54,9 +49,7 @@ class BaseClient {
     } on DioException catch (e) {
       return Failure(_mapDioError(e));
     } catch (e) {
-      return Failure(
-        UnknownError(e.toString()),
-      );
+      return Failure(UnknownError(e.toString()));
     }
   }
 

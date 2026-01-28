@@ -1,3 +1,5 @@
 class Constants {
-  static const String baseUrl = 'https://us-central1-pruebas-banco-b164f.cloudfunctions.net/app';
+  static const String baseUrl = String.fromEnvironment('COMMONS_BASE_URL');
+
+  static const String valorantBaseUrl = String.fromEnvironment('API_URL');
 }
