@@ -1,3 +1,3 @@
 class Constants {
-  static const String baseUrl = 'https://valorant-api.com/v1';
+  static const String baseUrl = 'https://us-central1-pruebas-banco-b164f.cloudfunctions.net/app';
 }
