@@ -13,7 +13,7 @@ class BaseClient {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
+          if (token != null) 'Authorization': 'Bearer $token',
         },
       ),
     );
