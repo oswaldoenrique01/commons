@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 class BaseClient {
   late final Dio _dio;
 
-  BaseClient({String? baseUrl}) {
+  BaseClient({String? baseUrl, String? token}) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl ?? Constants.baseUrl,
@@ -13,6 +13,7 @@ class BaseClient {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
         },
       ),
     );
