@@ -1,10 +1,11 @@
 import 'package:commons/services/services.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BaseClient {
   late final Dio _dio;
 
-  BaseClient({String? baseUrl, String? token}) {
+  BaseClient({String? baseUrl}) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl ?? Constants.baseUrl,
@@ -13,7 +14,6 @@ class BaseClient {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          if (token != null) 'Authorization': 'Bearer $token',
         },
       ),
     );
@@ -21,11 +21,20 @@ class BaseClient {
 
   Dio get dio => _dio;
 
-  Future<Result<Response>> get(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-  }) async {
+  Future<void> setToken() async {
+    final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    if (token == null) {
+      throw const NetworkError('Autenticación requerida');
+    }
+    _dio.options.headers['Authorization'] = 'Bearer $token';
+  }
+
+  Future<Result<Response>> get(String path,
+      {Map<String, dynamic>? queryParameters, bool authRequired = true}) async {
     try {
+      if (authRequired) {
+        await setToken();
+      }
       final response = await _dio.get(path, queryParameters: queryParameters);
       return Success(response);
     } on DioException catch (e) {
@@ -35,11 +44,10 @@ class BaseClient {
     }
   }
 
-  Future<Result<Response>> post(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-  }) async {
+  Future<Result<Response>> post(String path,
+      {dynamic data,
+      Map<String, dynamic>? queryParameters,
+      bool authRequired = true}) async {
     try {
       final response = await _dio.post(
         path,
